@@ -305,6 +305,12 @@
 
 /* ── Check-in complete ───────────────────────────────────────── */
 
+.checkin-complete-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .checkin-complete {
   display: flex;
   align-items: center;
@@ -322,6 +328,36 @@
   width: 22px;
   height: 22px;
   fill: #22c55e;
+  flex-shrink: 0;
+}
+
+.ticket-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 16px;
+  background: linear-gradient(135deg, #1565c0, #1e88e5);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: .92rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(21, 101, 192, .35);
+  transition: opacity .2s, transform .15s;
+}
+
+.ticket-btn:hover {
+  opacity: .9;
+  transform: translateY(-1px);
+}
+
+.ticket-icon {
+  width: 18px;
+  height: 18px;
+  fill: white;
   flex-shrink: 0;
 }
 
