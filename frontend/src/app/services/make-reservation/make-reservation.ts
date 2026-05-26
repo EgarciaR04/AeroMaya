@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { Airport, Flight, ReservaRequest, ReservaResponse } from '../../models/reservation.models';
+import { Airport, AsignarAsientoRequest, CheckinInfo, CheckinPasajero, Flight, ReservaRequest, ReservaResponse } from '../../models/reservation.models';
 
 interface HorarioDto {
   id: number;
@@ -43,5 +43,13 @@ export class ReservationService {
 
   crearReserva(request: ReservaRequest): Observable<ReservaResponse> {
     return this.http.post<ReservaResponse>(`${this.api}/reservas`, request, { withCredentials: true });
+  }
+
+  getCheckinInfo(codigoReserva: string): Observable<CheckinInfo> {
+    return this.http.get<CheckinInfo>(`${this.api}/checkin/${codigoReserva}`, { withCredentials: true });
+  }
+
+  asignarAsiento(request: AsignarAsientoRequest): Observable<CheckinPasajero> {
+    return this.http.post<CheckinPasajero>(`${this.api}/checkin/asignar`, request, { withCredentials: true });
   }
 }

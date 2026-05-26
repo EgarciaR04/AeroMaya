@@ -34,4 +34,7 @@ public class Horario {
 
     @Column(nullable = false)
     private Integer asientosDisponibles;
+
+    @Column(nullable = false)
+    private Integer capacidad;
 }

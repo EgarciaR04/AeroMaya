@@ -99,9 +99,10 @@ public class DataInitializer implements CommandLineRunner {
                              List<Integer> precios, List<Integer> capacidades) {
         VueloProgramado vuelo = vueloRepo.save(new VueloProgramado(null, ruta, fecha));
         for (int i = 0; i < codigos.size(); i++) {
-            int asientos = asientosDisponibles(fecha.toEpochDay(), rutaId, i, capacidades.get(i));
+            int cap = capacidades.get(i);
+            int asientos = asientosDisponibles(fecha.toEpochDay(), rutaId, i, cap);
             horarioRepo.save(new Horario(null, vuelo, codigos.get(i), horas.get(i),
-                    BigDecimal.valueOf(precios.get(i)), asientos));
+                    BigDecimal.valueOf(precios.get(i)), asientos, cap));
         }
     }
 

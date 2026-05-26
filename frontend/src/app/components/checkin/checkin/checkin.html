@@ -1,1 +1,167 @@
-<p>checkin works!</p>
+<div class="page">
+
+  <!-- ===== HEADER ===== -->
+  <header class="ci-header">
+    <div class="ci-brand">
+      <svg viewBox="0 0 24 24" fill="currentColor" class="ci-plane">
+        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+      </svg>
+      <span class="ci-title">Check-in de Vuelo</span>
+    </div>
+  </header>
+
+  <!-- ===== SEARCH BAR ===== -->
+  <div class="search-bar">
+    <div class="search-wrap">
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Ingresa tu código de reserva  (ej. AMA-XXXXXXXX)"
+        [value]="codigoInput()"
+        (input)="codigoInput.set($any($event.target).value)"
+        (keydown)="onCodigoKeydown($event)"
+      />
+      <button class="search-btn" (click)="buscar()" [disabled]="loading()">
+        @if (loading()) { Buscando... } @else { Buscar reserva }
+      </button>
+    </div>
+    @if (error()) {
+      <p class="search-error">{{ error() }}</p>
+    }
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  @if (checkinInfo(); as info) {
+    <main class="ci-content">
+
+      <!-- ── Left panel ── -->
+      <aside class="ci-left">
+
+        <!-- Flight info -->
+        <div class="info-card">
+          <div class="info-label">VUELO</div>
+          <div class="info-code">{{ info.codigoVuelo }}</div>
+          <div class="info-route">{{ info.origen }}</div>
+          <div class="info-arrow">↓</div>
+          <div class="info-route">{{ info.destino }}</div>
+          <div class="info-meta">{{ info.fecha }} · {{ info.hora }}</div>
+          <div class="info-reserva">Reserva: <strong>{{ info.codigoReserva }}</strong></div>
+        </div>
+
+        <!-- Passengers -->
+        <div class="passengers-card">
+          <div class="passengers-title">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="pax-icon">
+              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
+            Pasajeros
+          </div>
+
+          @for (p of info.pasajeros; track p.pasajeroId) {
+            <button
+              class="passenger-row"
+              [class.is-active]="activePasajeroId() === p.pasajeroId"
+              [class.has-seat]="p.fila !== null"
+              (click)="selectPasajero(p.pasajeroId)"
+            >
+              <div class="pax-info">
+                <span class="pax-num">{{ $index + 1 }}</span>
+                <div>
+                  <div class="pax-name">{{ p.nombre }} {{ p.apellido }}</div>
+                  @if (activePasajeroId() === p.pasajeroId) {
+                    <div class="pax-hint">Seleccionando asiento...</div>
+                  }
+                </div>
+              </div>
+              <div class="pax-seat">
+                @if (p.fila !== null) {
+                  <span class="seat-badge">{{ p.fila }}{{ p.columna }}</span>
+                } @else {
+                  <span class="seat-badge-empty">—</span>
+                }
+              </div>
+            </button>
+          }
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-card">
+          <div class="legend-title">Leyenda</div>
+          <div class="legend-items">
+            <div class="legend-item">
+              <span class="legend-dot dot-available"></span> Libre
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot dot-occupied"></span> Ocupado
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot dot-mine"></span> Esta reserva
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot dot-active"></span> Seleccionando
+            </div>
+          </div>
+        </div>
+
+        @if (allSeatsAssigned()) {
+          <div class="checkin-complete">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            Check-in completado
+          </div>
+        }
+
+      </aside>
+
+      <!-- ── Right panel: seat map ── -->
+      <section class="ci-right">
+        <div class="plane-wrap">
+
+          <div class="plane-nose">
+            <svg viewBox="0 0 60 40" fill="none">
+              <path d="M30 2 C15 2 5 15 5 28 L55 28 C55 15 45 2 30 2 Z" fill="#334155"/>
+            </svg>
+          </div>
+
+          <div class="col-headers">
+            <span class="row-num-spacer"></span>
+            <span>A</span><span>B</span><span>C</span>
+            <span class="aisle-spacer"></span>
+            <span>D</span><span>E</span><span>F</span>
+          </div>
+
+          <div class="seat-rows" [class.is-saving]="saving()">
+            @for (row of seatGrid(); track row.fila) {
+              <div class="seat-row">
+                <span class="row-num">{{ row.fila }}</span>
+                @for (cell of row.cells; track cell.columna) {
+                  @if (cell.columna === 'AISLE') {
+                    <span class="aisle-gap"></span>
+                  } @else {
+                    <button
+                      class="seat"
+                      [class]="'seat-' + cell.state"
+                      [disabled]="cell.state === 'occupied' || cell.state === 'mine' || saving()"
+                      [title]="'Asiento ' + row.fila + cell.columna"
+                      (click)="selectSeat(row.fila, cell.columna, cell.state)"
+                    ></button>
+                  }
+                }
+              </div>
+            }
+          </div>
+
+          <div class="plane-tail">
+            <svg viewBox="0 0 60 20" fill="none">
+              <path d="M5 0 L30 20 L55 0 Z" fill="#334155"/>
+            </svg>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  }
+
+</div>

@@ -47,3 +47,37 @@ export interface ReservaResponse {
   codigoVuelo: string;
   cantidadPasajeros: number;
 }
+
+export interface CheckinPasajero {
+  pasajeroId: number;
+  nombre: string;
+  apellido: string;
+  fila: number | null;
+  columna: string | null;
+}
+
+export interface AsientoOcupado {
+  fila: number;
+  columna: string;
+}
+
+export interface CheckinInfo {
+  codigoReserva: string;
+  estado: string;
+  origen: string;
+  destino: string;
+  fecha: string;
+  hora: string;
+  codigoVuelo: string;
+  horarioId: number;
+  totalFilas: number;
+  pasajeros: CheckinPasajero[];
+  asientosOcupados: AsientoOcupado[];
+}
+
+export interface AsignarAsientoRequest {
+  codigoReserva: string;
+  pasajeroId: number;
+  fila: number;
+  columna: string;
+}
