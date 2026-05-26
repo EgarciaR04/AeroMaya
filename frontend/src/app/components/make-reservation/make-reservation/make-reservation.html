@@ -1,9 +1,63 @@
 @if (currentStep() === 1) {
   <app-step-flight-selection (continued)="onContinued($event)" />
 }
+
 @if (currentStep() === 2) {
   <app-step-passenger-data
     [reservation]="reservationState()!"
     (backed)="onBacked()"
+    (confirmed)="onConfirmed($event)"
   />
+}
+
+@if (currentStep() === 3) {
+  @let r = bookingResult()!;
+  <div class="confirmation-page">
+    <div class="confirmation-card">
+      <div class="confirmation-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+      </div>
+      <h2 class="confirmation-title">¡Reserva confirmada!</h2>
+      <p class="confirmation-code">Código: <strong>{{ r.codigoReserva }}</strong></p>
+
+      <div class="confirmation-details">
+        <div class="detail-row">
+          <span class="detail-label">Vuelo</span>
+          <span class="detail-value">{{ r.codigoVuelo }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Ruta</span>
+          <span class="detail-value">{{ r.origen }} → {{ r.destino }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Fecha</span>
+          <span class="detail-value">{{ r.fecha }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Hora</span>
+          <span class="detail-value">{{ r.hora }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Pasajeros</span>
+          <span class="detail-value">{{ r.cantidadPasajeros }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Estado</span>
+          <span class="detail-value estado-confirmada">{{ r.estado }}</span>
+        </div>
+      </div>
+
+      <div class="confirmation-actions">
+        <button class="pdf-btn" (click)="descargarPDF()">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="pdf-icon">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+          </svg>
+          Descargar comprobante
+        </button>
+        <a class="home-btn" routerLink="/">Volver al inicio</a>
+      </div>
+    </div>
+  </div>
 }

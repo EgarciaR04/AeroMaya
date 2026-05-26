@@ -38,7 +38,7 @@
           <div class="field">
             <label class="field-label">ORIGEN</label>
             <select class="select-input" (change)="onOriginChange($event)">
-              @for (airport of airports; track airport.code) {
+              @for (airport of airports(); track airport.code) {
                 <option [value]="airport.code" [selected]="airport.code === origin()">{{ airport.label }}</option>
               }
             </select>
@@ -46,8 +46,8 @@
           <div class="field">
             <label class="field-label">DESTINO</label>
             <select class="select-input" (change)="onDestinationChange($event)">
-              @for (airport of airports; track airport.code) {
-                <option [value]="airport.code" [selected]="airport.code === destination()">{{ airport.label }}</option>
+              @for (dest of destinations(); track dest.code) {
+                <option [value]="dest.code" [selected]="dest.code === destination()">{{ dest.label }}</option>
               }
             </select>
           </div>
@@ -68,7 +68,11 @@
           <div class="field">
             <label class="field-label">VUELO SELECCIONADO</label>
             <div class="flight-selected-display">
-              {{ selectedFlight().time }} · {{ selectedFlight().id }}
+              @if (selectedFlight()) {
+                {{ selectedFlight()!.time }} · {{ selectedFlight()!.id }}
+              } @else {
+                —
+              }
             </div>
           </div>
         </div>
@@ -83,7 +87,7 @@
             </svg>
             Día del vuelo
           </h3>
-          <span class="availability-text">Disponibilidad: próximos 10 días</span>
+          <span class="availability-text">Disponibilidad: próximos 24 meses</span>
         </div>
         <div class="date-row">
           <div class="date-icon-box">
@@ -93,25 +97,37 @@
           </div>
           <div class="date-info">
             <div class="date-sublabel">FECHA SELECCIONADA</div>
-            <div class="date-value">Martes, 26 De Mayo De 2026</div>
+            <div class="date-value">{{ formattedDate() }}</div>
           </div>
-          <a href="#" class="change-link">Cambiar</a>
+          <input
+            class="date-input"
+            type="date"
+            [value]="selectedDate()"
+            [min]="minDate"
+            [max]="maxDate"
+            (change)="onDateChange($event)"
+          />
         </div>
       </div>
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="error-banner">{{ error() }}</div>
+      }
 
       <!-- Summary card -->
       <div class="card summary-card">
         <div class="summary-info">
           <span class="summary-label">Resumen</span>
           <div class="summary-route">
-            <strong>{{ originAirport().label }}</strong>
+            <strong>{{ originAirport()?.label ?? '—' }}</strong>
             <svg class="route-arrow" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
             </svg>
-            <strong>{{ destinationAirport().label }}</strong>
+            <strong>{{ destinationAirport()?.label ?? '—' }}</strong>
           </div>
         </div>
-        <button class="continue-btn" (click)="continue()">
+        <button class="continue-btn" (click)="continue()" [disabled]="!selectedFlight() || loading()">
           Continuar a pasajeros
           <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
@@ -131,29 +147,35 @@
             </svg>
             Horarios disponibles
           </h3>
-          <span class="date-badge">lunes, 25 de mayo</span>
+          <span class="date-badge">{{ formattedDate() }}</span>
         </div>
 
-        <div class="flights-list">
-          @for (flight of flights; track flight.id) {
-            <button
-              class="flight-slot"
-              [class.is-selected]="selectedFlightId() === flight.id"
-              (click)="selectFlight(flight.id)"
-            >
-              <div class="slot-left">
-                <div class="slot-time">{{ flight.time }}</div>
-                <div class="slot-code">Vuelo {{ flight.id }}</div>
-              </div>
-              <div class="slot-right">
-                <div class="slot-price">USD ${{ flight.price }}</div>
-                <div class="slot-seats" [class.seats-low]="flight.seats <= 5">
-                  <span class="seat-dot">●</span> {{ flight.seats }} asientos libres
+        @if (loading()) {
+          <div class="loading-state">Cargando horarios...</div>
+        } @else if (flights().length === 0) {
+          <div class="empty-state">No hay horarios disponibles para esta fecha.</div>
+        } @else {
+          <div class="flights-list">
+            @for (flight of flights(); track flight.horarioId) {
+              <button
+                class="flight-slot"
+                [class.is-selected]="selectedHorarioId() === flight.horarioId"
+                (click)="selectFlight(flight.horarioId)"
+              >
+                <div class="slot-left">
+                  <div class="slot-time">{{ flight.time }}</div>
+                  <div class="slot-code">Vuelo {{ flight.id }}</div>
                 </div>
-              </div>
-            </button>
-          }
-        </div>
+                <div class="slot-right">
+                  <div class="slot-price">USD ${{ flight.price }}</div>
+                  <div class="slot-seats" [class.seats-low]="flight.seats <= 5">
+                    <span class="seat-dot">●</span> {{ flight.seats }} asientos libres
+                  </div>
+                </div>
+              </button>
+            }
+          </div>
+        }
       </div>
     </div>
 

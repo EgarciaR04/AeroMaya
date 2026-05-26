@@ -1,3 +1,115 @@
 :host {
   display: block;
 }
+
+.confirmation-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f4ff;
+  padding: 2rem;
+}
+
+.confirmation-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,.1);
+}
+
+.confirmation-icon svg {
+  width: 64px;
+  height: 64px;
+  color: #22c55e;
+  fill: #22c55e;
+}
+
+.confirmation-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1rem 0 .5rem;
+  color: #1e293b;
+}
+
+.confirmation-code {
+  font-size: 1.1rem;
+  color: #475569;
+  margin-bottom: 1.5rem;
+}
+
+.confirmation-code strong {
+  color: #3b5bdb;
+  letter-spacing: .05em;
+}
+
+.confirmation-details {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  margin-bottom: 1.75rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: .4rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: .9rem;
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+.detail-label { color: #64748b; }
+.detail-value { font-weight: 600; color: #1e293b; }
+.estado-confirmada { color: #22c55e; }
+
+.home-btn {
+  display: inline-block;
+  background: #3b5bdb;
+  color: white;
+  padding: .75rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background .2s;
+}
+
+.home-btn:hover { background: #2f4ac7; }
+
+.confirmation-actions {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  background: #f1f5f9;
+  color: #1e293b;
+  border: 1.5px solid #cbd5e1;
+  padding: .75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+  width: 100%;
+}
+
+.pdf-btn:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.pdf-icon {
+  width: 18px;
+  height: 18px;
+}

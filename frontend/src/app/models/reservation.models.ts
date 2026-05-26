@@ -4,6 +4,7 @@ export interface Airport {
 }
 
 export interface Flight {
+  horarioId: number;
   id: string;
   time: string;
   price: number;
@@ -16,6 +17,7 @@ export interface ReservationState {
   passengers: number;
   flight: Flight;
   flightDate: string;
+  flightDateIso: string;
 }
 
 export interface PassengerForm {
@@ -25,4 +27,23 @@ export interface PassengerForm {
   fechaNacimiento: string;
   telefono: string;
   email: string;
+}
+
+export interface ReservaRequest {
+  origenCodigo: string;
+  destinoCodigo: string;
+  horarioId: number;
+  cantidadPasajeros: number;
+  pasajeros: PassengerForm[];
+}
+
+export interface ReservaResponse {
+  codigoReserva: string;
+  estado: string;
+  origen: string;
+  destino: string;
+  fecha: string;
+  hora: string;
+  codigoVuelo: string;
+  cantidadPasajeros: number;
 }

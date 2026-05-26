@@ -119,14 +119,23 @@
       </div>
     }
 
+    <!-- Error -->
+    @if (error()) {
+      <div class="error-banner">{{ error() }}</div>
+    }
+
     <!-- Bottom actions -->
     <div class="actions-bar">
-      <button class="cancel-btn" (click)="goBack()">Cancelar</button>
-      <button class="confirm-btn" (click)="confirm()">
-        Confirmar reservación
-        <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon">
-          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
-        </svg>
+      <button class="cancel-btn" (click)="goBack()" [disabled]="loading()">Cancelar</button>
+      <button class="confirm-btn" (click)="confirm()" [disabled]="loading()">
+        @if (loading()) {
+          Procesando...
+        } @else {
+          Confirmar reservación
+          <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon">
+            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+          </svg>
+        }
       </button>
     </div>
 

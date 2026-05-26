@@ -1,5 +1,6 @@
-import { Component, computed, output, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, output, signal } from '@angular/core';
 import { Airport, Flight, ReservationState } from '../../../models/reservation.models';
+import { ReservationService } from '../../../services/make-reservation/make-reservation';
 
 @Component({
   selector: 'app-step-flight-selection',
@@ -7,40 +8,107 @@ import { Airport, Flight, ReservationState } from '../../../models/reservation.m
   templateUrl: './step-flight-selection.html',
   styleUrl: './step-flight-selection.css',
 })
-export class StepFlightSelection {
+export class StepFlightSelection implements OnInit {
+  private svc = inject(ReservationService);
+
   readonly continued = output<ReservationState>();
 
-  readonly airports: Airport[] = [
-    { code: 'SDQ', label: 'Santo Domingo (SDQ)' },
-    { code: 'MIA', label: 'Miami (MIA)' },
-    { code: 'JFK', label: 'New York (JFK)' },
-    { code: 'LAX', label: 'Los Angeles (LAX)' },
-  ];
+  airports = signal<Airport[]>([]);
+  destinations = signal<Airport[]>([]);
+  flights = signal<Flight[]>([]);
 
-  readonly flights: Flight[] = [
-    { id: 'SK7673', time: '06:30', price: 341, seats: 16 },
-    { id: 'SK4280', time: '09:15', price: 327, seats: 12 },
-    { id: 'SK7090', time: '12:00', price: 299, seats: 3 },
-    { id: 'SK1275', time: '15:45', price: 219, seats: 37 },
-    { id: 'SK4679', time: '18:20', price: 185, seats: 11 },
-    { id: 'SK2175', time: '21:10', price: 358, seats: 31 },
-  ];
-
-  origin = signal('SDQ');
-  destination = signal('MIA');
+  origin = signal('');
+  destination = signal('');
   passengers = signal(1);
-  selectedFlightId = signal('SK7673');
+  selectedHorarioId = signal<number | null>(null);
+  selectedDate = signal(this.todayIso());
 
-  selectedFlight = computed(() => this.flights.find(f => f.id === this.selectedFlightId())!);
-  originAirport = computed(() => this.airports.find(a => a.code === this.origin())!);
-  destinationAirport = computed(() => this.airports.find(a => a.code === this.destination())!);
+  loading = signal(false);
+  error = signal('');
+
+  readonly minDate = this.todayIso();
+  readonly maxDate = this.plusMonths(24);
+
+  selectedFlight = computed(() =>
+    this.flights().find(f => f.horarioId === this.selectedHorarioId()) ?? null
+  );
+  originAirport = computed(() =>
+    this.airports().find(a => a.code === this.origin()) ?? null
+  );
+  destinationAirport = computed(() =>
+    this.destinations().find(a => a.code === this.destination()) ?? null
+  );
+  formattedDate = computed(() => {
+    const d = new Date(this.selectedDate() + 'T00:00:00');
+    return d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  });
+
+  ngOnInit() {
+    this.svc.getAeropuertos().subscribe({
+      next: airports => {
+        this.airports.set(airports);
+        if (airports.length > 0) {
+          this.origin.set(airports[0].code);
+          this.loadDestinations(airports[0].code);
+        }
+      },
+      error: () => this.error.set('No se pudieron cargar los aeropuertos.'),
+    });
+  }
+
+  private loadDestinations(codigo: string) {
+    this.svc.getDestinos(codigo).subscribe({
+      next: dests => {
+        this.destinations.set(dests);
+        if (dests.length > 0) {
+          this.destination.set(dests[0].code);
+          this.loadFlights();
+        } else {
+          this.destination.set('');
+          this.flights.set([]);
+        }
+      },
+      error: () => this.error.set('No se pudieron cargar los destinos.'),
+    });
+  }
+
+  private loadFlights() {
+    const o = this.origin();
+    const d = this.destination();
+    const f = this.selectedDate();
+    if (!o || !d || !f) return;
+
+    this.loading.set(true);
+    this.error.set('');
+    this.svc.getHorarios(o, d, f).subscribe({
+      next: flights => {
+        this.flights.set(flights);
+        this.selectedHorarioId.set(flights[0]?.horarioId ?? null);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.flights.set([]);
+        this.selectedHorarioId.set(null);
+        this.error.set('No hay vuelos disponibles para esta fecha.');
+        this.loading.set(false);
+      },
+    });
+  }
 
   onOriginChange(event: Event) {
-    this.origin.set((event.target as HTMLSelectElement).value);
+    const code = (event.target as HTMLSelectElement).value;
+    this.origin.set(code);
+    this.loadDestinations(code);
   }
 
   onDestinationChange(event: Event) {
     this.destination.set((event.target as HTMLSelectElement).value);
+    this.loadFlights();
+  }
+
+  onDateChange(event: Event) {
+    this.selectedDate.set((event.target as HTMLInputElement).value);
+    this.loadFlights();
   }
 
   decreasePassengers() {
@@ -51,17 +119,33 @@ export class StepFlightSelection {
     this.passengers.update(n => n + 1);
   }
 
-  selectFlight(id: string) {
-    this.selectedFlightId.set(id);
+  selectFlight(horarioId: number) {
+    this.selectedHorarioId.set(horarioId);
   }
 
   continue() {
+    const flight = this.selectedFlight();
+    const origin = this.originAirport();
+    const destination = this.destinationAirport();
+    if (!flight || !origin || !destination) return;
+
     this.continued.emit({
-      origin: this.originAirport(),
-      destination: this.destinationAirport(),
+      origin,
+      destination,
       passengers: this.passengers(),
-      flight: this.selectedFlight(),
-      flightDate: 'lunes, 25 de mayo',
+      flight,
+      flightDate: this.formattedDate(),
+      flightDateIso: this.selectedDate(),
     });
+  }
+
+  private todayIso(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  private plusMonths(months: number): string {
+    const d = new Date();
+    d.setMonth(d.getMonth() + months);
+    return d.toISOString().split('T')[0];
   }
 }
