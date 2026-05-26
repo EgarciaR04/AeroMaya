@@ -1,0 +1,326 @@
+/* ================================================================
+   STEP 2 – Datos de pasajeros
+   ================================================================ */
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #e4eff9 0%, #d0e4f5 100%);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+
+.header {
+  background: linear-gradient(to right, #0c1845, #1055b8, #1a6fbd);
+  padding: 18px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.back-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.header-plane-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.header-subtitle {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.8rem;
+}
+
+.header-spacer {
+  /* Keeps the center title truly centered */
+  width: 100px;
+  flex-shrink: 0;
+}
+
+/* ── Main content ──────────────────────────────────────────── */
+
+.content {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Cards ─────────────────────────────────────────────────── */
+
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.07);
+}
+
+/* ── Flight summary card ───────────────────────────────────── */
+
+.flight-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+}
+
+.summary-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.summary-route {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.route-arrow {
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.summary-details {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.summary-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.summary-total-label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.summary-total-price {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1565c0;
+  white-space: nowrap;
+}
+
+/* ── Passenger section ─────────────────────────────────────── */
+
+.passenger-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.passenger-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #1565c0;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+
+.badge-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Passenger form card ───────────────────────────────────── */
+
+.passenger-card {
+  padding: 28px;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ── Form fields ───────────────────────────────────────────── */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.field-input {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: 0.93rem;
+  color: #111827;
+  width: 100%;
+  outline: none;
+  transition: background 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.field-input:focus {
+  background: #e8f0fe;
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.3);
+}
+
+.field-input::placeholder {
+  color: #cbd5e1;
+}
+
+/* ── Bottom actions bar ────────────────────────────────────── */
+
+.actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0 16px;
+}
+
+.cancel-btn {
+  background: none;
+  border: none;
+  font-size: 0.93rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: color 0.15s;
+}
+
+.cancel-btn:hover {
+  color: #374151;
+}
+
+.confirm-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #1565c0, #1e88e5);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 15px 30px;
+  font-size: 0.97rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.35);
+}
+
+.confirm-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .content {
+    padding: 20px;
+  }
+
+  .header {
+    padding: 16px 20px;
+  }
+
+  .flight-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .summary-right {
+    text-align: left;
+  }
+}
+
+@media (max-width: 600px) {
+  .fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-spacer {
+    display: none;
+  }
+
+  .confirm-btn {
+    padding: 14px 20px;
+    font-size: 0.9rem;
+  }
+}

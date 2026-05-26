@@ -1,0 +1,134 @@
+<div class="page">
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <button class="back-btn" (click)="goBack()">
+      <svg viewBox="0 0 24 24" fill="currentColor" class="back-icon">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+      Volver
+    </button>
+
+    <div class="header-center">
+      <div class="header-title">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="header-plane-icon">
+          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+        </svg>
+        Datos de pasajeros
+      </div>
+      <div class="header-subtitle">
+        Paso 2 de 3 · {{ reservation().passengers }} pasajero{{ reservation().passengers !== 1 ? 's' : '' }}
+      </div>
+    </div>
+
+    <div class="header-spacer"></div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="content">
+
+    <!-- Flight summary card -->
+    <div class="card flight-summary">
+      <div class="summary-left">
+        <div class="summary-label">TU VUELO</div>
+        <div class="summary-route">
+          {{ reservation().origin.label }}
+          <svg viewBox="0 0 24 24" fill="currentColor" class="route-arrow">
+            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+          </svg>
+          {{ reservation().destination.label }}
+        </div>
+        <div class="summary-details">
+          {{ reservation().flightDate }} · {{ reservation().flight.time }} · Vuelo {{ reservation().flight.id }}
+        </div>
+      </div>
+      <div class="summary-right">
+        <div class="summary-total-label">Total</div>
+        <div class="summary-total-price">USD ${{ reservation().flight.price }}</div>
+      </div>
+    </div>
+
+    <!-- Passenger forms -->
+    @for (form of passengerForms(); track $index) {
+      <div class="passenger-section">
+        <div class="passenger-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="badge-icon">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+          Pasajero {{ $index + 1 }}
+        </div>
+
+        <div class="card passenger-card">
+          <div class="fields-grid">
+            <div class="field">
+              <label class="field-label">NOMBRE</label>
+              <input
+                class="field-input"
+                type="text"
+                [value]="form.nombre"
+                (input)="updateField($index, 'nombre', $event)"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label">APELLIDO</label>
+              <input
+                class="field-input"
+                type="text"
+                [value]="form.apellido"
+                (input)="updateField($index, 'apellido', $event)"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label">IDENTIFICACIÓN PERSONAL</label>
+              <input
+                class="field-input"
+                type="text"
+                [value]="form.identificacion"
+                (input)="updateField($index, 'identificacion', $event)"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label">FECHA DE NACIMIENTO</label>
+              <input
+                class="field-input"
+                type="date"
+                [value]="form.fechaNacimiento"
+                (input)="updateField($index, 'fechaNacimiento', $event)"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label">NÚMERO TELEFÓNICO</label>
+              <input
+                class="field-input"
+                type="tel"
+                [value]="form.telefono"
+                (input)="updateField($index, 'telefono', $event)"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label">CORREO ELECTRÓNICO</label>
+              <input
+                class="field-input"
+                type="email"
+                [value]="form.email"
+                (input)="updateField($index, 'email', $event)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Bottom actions -->
+    <div class="actions-bar">
+      <button class="cancel-btn" (click)="goBack()">Cancelar</button>
+      <button class="confirm-btn" (click)="confirm()">
+        Confirmar reservación
+        <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon">
+          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+        </svg>
+      </button>
+    </div>
+
+  </main>
+</div>

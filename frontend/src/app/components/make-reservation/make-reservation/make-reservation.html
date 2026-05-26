@@ -1,1 +1,9 @@
-<p>make-reservation works!</p>
+@if (currentStep() === 1) {
+  <app-step-flight-selection (continued)="onContinued($event)" />
+}
+@if (currentStep() === 2) {
+  <app-step-passenger-data
+    [reservation]="reservationState()!"
+    (backed)="onBacked()"
+  />
+}
