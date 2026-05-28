@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: aeromaya
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+      - name: wait-for-oracle
+        image: busybox:latest
+        command: ['sh', '-c', 'until nc -z oracle-service 1521; do echo waiting for oracle; sleep 10; done']
+      containers:
+      - name: backend
+        image: MASTER_IP:5000/aeromaya-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:oracle:thin:@oracle-service:1521/FREEPDB1
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: oracle-secret
+              key: app-user
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: oracle-secret
+              key: app-user-password
+        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+          value: oracle.jdbc.OracleDriver
+        - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+          value: org.hibernate.dialect.OracleDialect
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: update
+        - name: SPRING_H2_CONSOLE_ENABLED
+          value: "false"
+        readinessProbe:
+          httpGet:
+            path: /api/aeropuertos
+            port: 8080
+          initialDelaySeconds: 40
+          periodSeconds: 10
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /api/aeropuertos
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30

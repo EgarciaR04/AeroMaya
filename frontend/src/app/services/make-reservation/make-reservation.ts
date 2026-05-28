@@ -16,7 +16,7 @@ interface HorarioDto {
 })
 export class ReservationService {
   private http = inject(HttpClient);
-  private api = 'http://localhost:8080/api';
+  private api = '/api';
 
   getAeropuertos(): Observable<Airport[]> {
     return this.http.get<Airport[]>(`${this.api}/aeropuertos`, { withCredentials: true });

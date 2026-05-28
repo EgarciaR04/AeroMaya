@@ -1,0 +1,56 @@
+services:
+
+  oracle-db:
+    image: gvenzl/oracle-free:latest
+    container_name: aeromaya-oracle
+    environment:
+      ORACLE_PASSWORD: Oracle1234
+      APP_USER: aeromaya
+      APP_USER_PASSWORD: Aeromaya1234
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD-SHELL", "healthcheck.sh"]
+      interval: 30s
+      timeout: 20s
+      retries: 20
+      start_period: 300s
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aeromaya-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/FREEPDB1
+      SPRING_DATASOURCE_USERNAME: aeromaya
+      SPRING_DATASOURCE_PASSWORD: Aeromaya1234
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.OracleDriver
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.OracleDialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_H2_CONSOLE_ENABLED: "false"
+    ports:
+      - "8080:8080"
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    restart: on-failure
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: aeromaya-frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/nginx.docker.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  oracle-data:

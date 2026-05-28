@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracle-db
+  namespace: aeromaya
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oracle-db
+  template:
+    metadata:
+      labels:
+        app: oracle-db
+    spec:
+      nodeSelector:
+        role: oracle
+      containers:
+      - name: oracle-db
+        image: gvenzl/oracle-free:latest
+        ports:
+        - containerPort: 1521
+        env:
+        - name: ORACLE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: oracle-secret
+              key: oracle-password
+        - name: APP_USER
+          valueFrom:
+            secretKeyRef:
+              name: oracle-secret
+              key: app-user
+        - name: APP_USER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: oracle-secret
+              key: app-user-password
+        readinessProbe:
+          exec:
+            command: ["healthcheck.sh"]
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          failureThreshold: 10
+          timeoutSeconds: 20
+        livenessProbe:
+          exec:
+            command: ["healthcheck.sh"]
+          initialDelaySeconds: 180
+          periodSeconds: 60
+          timeoutSeconds: 20
+        volumeMounts:
+        - name: oracle-data
+          mountPath: /opt/oracle/oradata
+      volumes:
+      - name: oracle-data
+        persistentVolumeClaim:
+          claimName: oracle-pvc
