@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: aeromaya
+data:
+  SPRING_DATASOURCE_URL: "jdbc:oracle:thin:@oracle-service:1521/FREEPDB1"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "oracle.jdbc.OracleDriver"
+  SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.OracleDialect"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+  SPRING_H2_CONSOLE_ENABLED: "false"

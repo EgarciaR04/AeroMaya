@@ -1,0 +1,68 @@
+grafana:
+  adminPassword: "Aeromaya1234!"
+  service:
+    type: NodePort
+    nodePort: 32000
+  persistence:
+    enabled: false
+  defaultDashboardsEnabled: true
+  grafana.ini:
+    smtp:
+      enabled: true
+      host: smtp.gmail.com:587
+      user: ericrivas192@gmail.com
+      password: "mzqz dydo fnfv tpvc"
+      from_address: ericrivas192@gmail.com
+      from_name: "Grafana Aeromaya"
+      startTLS_policy: MandatoryStartTLS
+
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    storageSpec: {}
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 100m
+      limits:
+        memory: 512Mi
+        cpu: 500m
+    additionalScrapeConfigs:
+    - job_name: 'blackbox-frontend'
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+      static_configs:
+      - targets:
+        - http://147.182.138.185:30080
+      relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter-prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115
+    - job_name: 'blackbox-backend'
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+      static_configs:
+      - targets:
+        - http://147.182.138.185:30080/api/aeropuertos
+      relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter-prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115
+
+alertmanager:
+  alertmanagerSpec:
+    storage: {}
+
+nodeExporter:
+  enabled: true
+
+kubeStateMetrics:
+  enabled: true
