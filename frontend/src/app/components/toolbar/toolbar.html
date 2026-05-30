@@ -1,8 +1,28 @@
-<header>
-  <span class="logo">AeroMaya</span>
-  <nav>
-    <a href="/">Inicio</a>
-    <a href="make-reservation/">Nueva Reserva</a>
-    <a href="checkin/">Check In</a>
+<div class="toolbar-wrapper">
+  <div class="toolbar-card">
+    <div class="brand">
+      <span class="material-icons plane-icon">flight</span>
+      <span class="brand-text">Aero<em>Maya</em></span>
+    </div>
+    <button class="close-btn" (click)="toggleNav()" [attr.aria-label]="navOpen ? 'Cerrar menú' : 'Abrir menú'">
+      <span class="material-icons">{{ navOpen ? 'close' : 'menu' }}</span>
+    </button>
+  </div>
+
+  @if (navOpen) {
+  <nav class="nav-card">
+    <a routerLink="/" class="nav-item">
+      <span class="material-icons">home</span>
+      <span>Inicio</span>
+    </a>
+    <a routerLink="/make-reservation" class="nav-item">
+      <span class="material-icons">calendar_month</span>
+      <span>Nueva Reserva</span>
+    </a>
+    <a routerLink="/checkin" class="nav-item">
+      <span class="material-icons">schedule</span>
+      <span>Check In</span>
+    </a>
   </nav>
-</header>
+  }
+</div>
