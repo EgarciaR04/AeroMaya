@@ -15,6 +15,7 @@ jobs:
   build-backend:
     name: Build & Push Backend
     runs-on: ubuntu-latest
+    environment: AEROMAYA PROD
     outputs:
       image_tag: ${{ steps.meta.outputs.version }}
     steps:
@@ -52,6 +53,7 @@ jobs:
   build-frontend:
     name: Build & Push Frontend
     runs-on: ubuntu-latest
+    environment: AEROMAYA PROD
     outputs:
       image_tag: ${{ steps.meta.outputs.version }}
     steps:
@@ -91,6 +93,7 @@ jobs:
     needs: [build-backend, build-frontend]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: AEROMAYA PROD
     steps:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
