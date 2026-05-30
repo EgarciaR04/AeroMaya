@@ -4,17 +4,10 @@ grafana:
     type: NodePort
     nodePort: 32000
   persistence:
-    enabled: false
+    enabled: true
+    existingClaim: grafana-pvc
   defaultDashboardsEnabled: true
-  grafana.ini:
-    smtp:
-      enabled: true
-      host: smtp.gmail.com:587
-      user: ericrivas192@gmail.com
-      password: "mzqz dydo fnfv tpvc"
-      from_address: ericrivas192@gmail.com
-      from_name: "Grafana Aeromaya"
-      startTLS_policy: MandatoryStartTLS
+  assertNoLeakedSecrets: false
 
 prometheus:
   prometheusSpec:

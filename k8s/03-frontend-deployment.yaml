@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: MASTER_IP:5000/aeromaya-frontend:latest
+        image: erivas04/aeromaya-frontend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
